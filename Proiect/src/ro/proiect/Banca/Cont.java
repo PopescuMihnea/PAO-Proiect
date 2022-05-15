@@ -4,59 +4,60 @@ import ro.proiect.Enums.AccountTypes;
 import ro.proiect.Enums.CashTypes;
 import ro.proiect.Helpers.Checkers;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Cont extends DateCont {
-    private static final int _IBANLength = 10;
-    private final ArrayList<Tranzactie> _tranzactii = new ArrayList<Tranzactie>();
-    private final String _IBAN;
-    private final TreeSet<ExtrasDeCont> _extraseDeCont = new TreeSet<ExtrasDeCont>();
-    private final HashSet<Card> _carduri = new HashSet<Card>();
+    private static final int ibanLength = 10;
+    private final ArrayList<Tranzactie> tranzactii = new ArrayList<>();
+    private final String iban;
+    private final TreeSet<ExtrasDeCont> extraseDeCont = new TreeSet<>();
+    private final HashSet<Card> carduri = new HashSet<>();
 
     public Cont(AccountTypes tipCont, CashTypes tipValuta) {
         this(0, tipCont, tipValuta);
     }
 
     public Cont(Cont cont) {
-        super(cont._sumaStocata, cont._tipCont, cont._tipValuta);
-        this._IBAN = cont._IBAN;
-        for (ExtrasDeCont extrasDeCont : cont._extraseDeCont) {
-            this._extraseDeCont.add(new ExtrasDeCont(extrasDeCont));
+        super(cont.sumaStocata, cont.tipCont, cont.tipValuta);
+        this.iban = cont.iban;
+        for (ExtrasDeCont extrasDeCont : cont.extraseDeCont) {
+            this.extraseDeCont.add(new ExtrasDeCont(extrasDeCont));
         }
-        for (Tranzactie tranzactie : cont._tranzactii) {
-            this._tranzactii.add(new Tranzactie(tranzactie));
+        for (Tranzactie tranzactie : cont.tranzactii) {
+            this.tranzactii.add(new Tranzactie(tranzactie));
         }
-        for (Card card : cont._carduri) {
-            this._carduri.add(new Card(card));
+        for (Card card : cont.carduri) {
+            this.carduri.add(new Card(card));
         }
     }
 
     public Cont(int sumaStocata, AccountTypes tipCont, CashTypes tipValuta) {
         super(sumaStocata, tipCont, tipValuta);
-        this._IBAN = "RO" + genIBAN();
+        this.iban = "RO" + genIBAN();
     }
 
-    public Cont(int sumaStocata, AccountTypes tipCont, CashTypes tipValuta, String IBAN) {
+    public Cont(int sumaStocata, AccountTypes tipCont, CashTypes tipValuta, String iban) {
         super(sumaStocata, tipCont, tipValuta);
-        Checkers.CheckProperty(IBAN, x -> x.length() != 10 && x.startsWith("RO"), "Incorrect IBAN format");
-        this._IBAN = IBAN;
+        Checkers.checkProperty(iban, x -> x.length() != 10 && x.startsWith("RO"), "Incorrect IBAN format");
+        this.iban = iban;
     }
 
-    public HashSet<Card> get_carduri() {
-        return new HashSet<Card>(_carduri.stream().map(x -> x.Clone()).collect(Collectors.toList()));
+    public HashSet<Card> getCarduri() {
+        return carduri.stream().map(Card::clone).collect(Collectors.toCollection(HashSet::new));
     }
 
-    public TreeSet<ExtrasDeCont> get_extraseDeCont() {
-        return new TreeSet<ExtrasDeCont>(_extraseDeCont.stream().map(x -> new ExtrasDeCont(x)).collect(Collectors.toList()));
+    public TreeSet<ExtrasDeCont> getExtraseDeCont() {
+        return extraseDeCont.stream().map(ExtrasDeCont::new).collect(Collectors.toCollection(TreeSet::new));
     }
 
-    public String get_IBAN() {
-        return _IBAN;
+    public String getIban() {
+        return iban;
     }
 
     private String genIBAN() {
-        char[] array = new Random().ints(Cont._IBANLength, '0', '9' + 1)
+        char[] array = new Random().ints(Cont.ibanLength, '0', '9' + 1)
                 .mapToObj(c -> Character.toString((char) c))
                 .collect(Collectors.joining())
                 .toCharArray();
@@ -68,18 +69,18 @@ public class Cont extends DateCont {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cont cont = (Cont) o;
-        return _IBAN.equals(cont._IBAN);
+        return iban.equals(cont.iban);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_IBAN);
+        return Objects.hash(iban);
     }
 
     public int compareTo(DateCont o) {
-        if (this.GetEur() > o.GetEur())
+        if (this.getEur() > o.getEur())
             return 1;
-        else if (this.GetEur() < o.GetEur())
+        else if (this.getEur() < o.getEur())
             return -1;
         return 0;
     }
@@ -87,57 +88,57 @@ public class Cont extends DateCont {
     @Override
     public String toString() {
         return "Cont{" +
-                "_tranzactii=" + _tranzactii +
-                ", _IBAN='" + _IBAN + '\'' +
-                ", _extraseDeCont=" + _extraseDeCont +
-                ", _carduri=" + _carduri +
-                ", _sumaStocata=" + _sumaStocata +
-                ", _tipCont=" + _tipCont +
-                ", _tipValuta=" + _tipValuta +
+                "_tranzactii=" + tranzactii +
+                ", _IBAN='" + iban + '\'' +
+                ", _extraseDeCont=" + extraseDeCont +
+                ", _carduri=" + carduri +
+                ", _sumaStocata=" + sumaStocata +
+                ", _tipCont=" + tipCont +
+                ", _tipValuta=" + tipValuta +
                 '}';
     }
 
-    public void AddCard(Card card) {
-        this._carduri.add(card.Clone());
+    public void addCard(Card card) {
+        this.carduri.add(card.clone());
     }
 
-    public void RemoveCard(Card card) {
-        this._carduri.remove(card);
+    public void removeCard(Card card) {
+        this.carduri.remove(card);
     }
 
-    public void AddTranzacite(Tranzactie tranzactie) {
-        this._tranzactii.add(new Tranzactie(tranzactie));
+    public void addTranzacite(Tranzactie tranzactie) {
+        this.tranzactii.add(new Tranzactie(tranzactie));
     }
 
-    public void RemoveTranzactie(Tranzactie tranzactie) {
-        this._tranzactii.remove(tranzactie);
+    public void removeTranzactie(Tranzactie tranzactie) {
+        this.tranzactii.remove(tranzactie);
     }
 
-    public void AddExtrasDeCont() {
-        this._extraseDeCont.add(new ExtrasDeCont(this._sumaStocata, this._tipCont, this._tipValuta, new Date()));
+    public void addExtrasDeCont() {
+        this.extraseDeCont.add(new ExtrasDeCont(this.sumaStocata, this.tipCont, this.tipValuta, LocalDate.now()));
     }
 
-    public void AddExtrasDeCont(ExtrasDeCont extrasDeCont) {
-        this._extraseDeCont.add(new ExtrasDeCont(extrasDeCont));
+    public void addExtrasDeCont(ExtrasDeCont extrasDeCont) {
+        this.extraseDeCont.add(new ExtrasDeCont(extrasDeCont));
     }
 
-    public void AddExtraseDeCont(Iterable<ExtrasDeCont> extraseDeCont) {
+    public void addExtraseDeCont(List<ExtrasDeCont> extraseDeCont) {
         for (ExtrasDeCont extrasDeCont : extraseDeCont) {
-            this.AddExtrasDeCont(extrasDeCont);
+            this.addExtrasDeCont(extrasDeCont);
         }
     }
 
-    public void RemoveExtrasDeCont(ExtrasDeCont extrasDeCont) {
-        this._extraseDeCont.remove(extrasDeCont);
+    public void removeExtrasDeCont(ExtrasDeCont extrasDeCont) {
+        this.extraseDeCont.remove(extrasDeCont);
     }
 
-    public ArrayList<Tranzactie> get_tranzactii() {
-        return new ArrayList<Tranzactie>(_tranzactii.stream().map(x -> new Tranzactie(x)).collect(Collectors.toList()));
+    public ArrayList<Tranzactie> getTranzactii() {
+        return tranzactii.stream().map(Tranzactie::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public void RemoveExtraseDeCont(Iterable<ExtrasDeCont> extraseDeCont) {
+    public void removeExtraseDeCont(List<ExtrasDeCont> extraseDeCont) {
         for (ExtrasDeCont extrasDeCont : extraseDeCont) {
-            this.RemoveExtrasDeCont(extrasDeCont);
+            this.removeExtrasDeCont(extrasDeCont);
         }
     }
 

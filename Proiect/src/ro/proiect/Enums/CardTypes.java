@@ -1,7 +1,7 @@
 package ro.proiect.Enums;
 
 public enum CardTypes {
-    CreditCard,
-    DebitCard,
-    Unknown,
+    CREDIT_CARD,
+    DEBIT_CARD,
+    UNKNOWN,
 }

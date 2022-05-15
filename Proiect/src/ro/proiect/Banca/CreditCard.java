@@ -3,56 +3,56 @@ package ro.proiect.Banca;
 import ro.proiect.Enums.CardTypes;
 import ro.proiect.Helpers.Checkers;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class CreditCard extends Card {
-    private final static int _creditLimit = 500;
-    private int _credit;
+    private final static int creditLimit = 500;
+    private int credit;
 
-    public CreditCard(String PIN, Date expirationDate, int _credit) {
-        super(PIN, expirationDate);
-        this._credit = _credit;
-        this._tip = CardTypes.CreditCard;
+    public CreditCard(String pin, LocalDate expirationDate, int credit) {
+        super(pin, expirationDate);
+        this.credit = credit;
+        this.tip = CardTypes.CREDIT_CARD;
     }
 
-    public CreditCard(String PIN, Date expirationDate) {
-        this(PIN, expirationDate, 0);
+    public CreditCard(String pin, LocalDate expirationDate) {
+        this(pin, expirationDate, 0);
     }
 
     public CreditCard(CreditCard card) {
         super(card);
-        this._credit = card._credit;
-        this._tip = CardTypes.CreditCard;
+        this.credit = card.credit;
+        this.tip = CardTypes.CREDIT_CARD;
     }
 
     @Override
     public String toString() {
         return "CreditCard{" +
-                "_PIN='" + _PIN + '\'' +
-                ", _id=" + _id +
-                ", _expirationDate=" + _expirationDate +
-                ", _credit=" + _credit +
+                "_PIN='" + pin + '\'' +
+                ", _id=" + id +
+                ", _expirationDate=" + expirationDate +
+                ", _credit=" + credit +
                 '}';
     }
 
     @Override
-    public void Pay(int value) {
-        Checkers.CheckProperty(CreditCard._creditLimit - this._credit, value, (x, y) -> x >= y, "Surpassing credit limit");
-        this._credit += value;
+    public void pay(int value) {
+        Checkers.checkProperty(CreditCard.creditLimit - this.credit, value, (x, y) -> x >= y, "Surpassing credit limit");
+        this.credit += value;
     }
 
     @Override
-    public void Charge(int value) {
-        this._credit -= value;
+    public void charge(int value) {
+        this.credit -= value;
     }
 
     @Override
-    public int GetAllowance() {
-        return CreditCard._creditLimit - this._credit;
+    public int getAllowance() {
+        return CreditCard.creditLimit - this.credit;
     }
 
     @Override
-    public Card Clone() {
+    public Card clone() {
         return new CreditCard(this);
     }
 }

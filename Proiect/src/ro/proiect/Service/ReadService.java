@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class ReadService {
     private static ReadService instance = null;
@@ -20,7 +19,7 @@ public class ReadService {
         return instance;
     }
 
-    public ArrayList<ArrayList<String>> Read(String path) throws IOException {
+    public ArrayList<ArrayList<String>> read(String path) throws IOException {
         ArrayList<ArrayList<String>> objects = new ArrayList<>();
         File file = new File(path);
         Scanner myReader = new Scanner(file);
@@ -28,6 +27,6 @@ public class ReadService {
             String data = myReader.nextLine();
             objects.add(new ArrayList<>(Arrays.asList(data.split(","))));
         }
-        return (ArrayList<ArrayList<String>>) objects.stream().collect(Collectors.toList());
+        return new ArrayList<>(objects);
     }
 }

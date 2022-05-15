@@ -8,13 +8,13 @@ public enum CashTypes {
     UAH(0.031f),
     YEN(0.0073f);
 
-    private final float _conversionToEuro;
+    private final float conversionToEuro;
 
     CashTypes(float conversionToEuro) {
-        this._conversionToEuro = conversionToEuro;
+        this.conversionToEuro = conversionToEuro;
     }
 
     public float value() {
-        return this._conversionToEuro;
+        return this.conversionToEuro;
     }
 }

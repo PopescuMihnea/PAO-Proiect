@@ -6,26 +6,26 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Banca {
-    private final ArrayList<Client> _clienti = new ArrayList<Client>();
-    private String _nume;
+    private final ArrayList<Client> clienti = new ArrayList<>();
+    private String nume;
 
-    public Banca(String _nume) {
-        this._nume = _nume;
+    public Banca(String nume) {
+        this.nume = nume;
     }
 
-    public String get_nume() {
-        return _nume;
+    public String getNume() {
+        return nume;
     }
 
-    public void set_nume(String _nume) {
-        this._nume = _nume;
+    public void setNume(String nume) {
+        this.nume = nume;
     }
 
     @Override
     public String toString() {
         return "Banca{" +
-                "_nume='" + _nume + '\'' +
-                ", _clienti=" + _clienti +
+                "_nume='" + nume + '\'' +
+                ", _clienti=" + clienti +
                 '}';
     }
 
@@ -34,23 +34,23 @@ public class Banca {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Banca banca = (Banca) o;
-        return _nume.equals(banca._nume) && _clienti.equals(banca._clienti);
+        return nume.equals(banca.nume) && clienti.equals(banca.clienti);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_nume);
+        return Objects.hash(nume);
     }
 
-    public List<Client> get_clienti() {
-        return _clienti.stream().map(x -> new Client(x)).collect(Collectors.toList());
+    public List<Client> getClienti() {
+        return clienti.stream().map(Client::new).collect(Collectors.toList());
     }
 
-    public void AddClient(Client client) {
-        this._clienti.add(new Client(client));
+    public void addClient(Client client) {
+        this.clienti.add(new Client(client));
     }
 
-    public void RemoveClient(Client client) {
-        this._clienti.remove(client);
+    public void removeClient(Client client) {
+        this.clienti.remove(client);
     }
 }

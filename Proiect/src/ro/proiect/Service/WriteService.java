@@ -18,13 +18,13 @@ public class WriteService {
         return instance;
     }
 
-    public void Clear(String path) throws IOException {
+    public void clear(String path) throws IOException {
         FileWriter file = new FileWriter(path);
         BufferedWriter write = new BufferedWriter(file);
         write.close();
     }
 
-    public void Write(String path, String message) throws IOException {
+    public void write(String path, String message) throws IOException {
         FileWriter file = new FileWriter(path, true);
         BufferedWriter write = new BufferedWriter(file);
         write.write(message);

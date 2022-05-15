@@ -1,11 +1,11 @@
 package ro.proiect.Interfaces;
 
 public interface Icard {
-    void Pay(int value);
+    void pay(int value);
 
-    int GetAllowance();
+    int getAllowance();
 
-    void Charge(int value);
+    void charge(int value);
 
-    Icard Clone();
+    Icard clone();
 }

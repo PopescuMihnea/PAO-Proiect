@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,67 +20,65 @@ public class BancaService {
 
     public BancaService() throws IOException {
         WriteService writer = WriteService.getInstance();
-        writer.Clear(_logFileName);
+        writer.clear(_logFileName);
     }
 
-    public Iterable<Client> GetClientsByFirstName(Banca banca, String firstName) throws IOException {
-        List<Client> clienti = banca.get_clienti();
+    public List<Client> GetClientsByFirstName(Banca banca, String firstName) throws IOException {
+        List<Client> clienti = banca.getClienti();
         WriteLog("GetClientsByFirstName");
-        return clienti.stream().filter(x -> x.get_firstName().equals(firstName)).collect(Collectors.toList());
+        return clienti.stream().filter(x -> x.getFirstName().equals(firstName)).collect(Collectors.toList());
     }
 
-    public Iterable<Client> GetClientsByLastName(Banca banca, String lastName) throws IOException {
-        List<Client> clienti = banca.get_clienti();
+    public List<Client> GetClientsByLastName(Banca banca, String lastName) throws IOException {
+        List<Client> clienti = banca.getClienti();
         WriteLog("GetClientsByLastName");
-        return clienti.stream().filter(x -> x.get_lastName().equals(lastName)).collect(Collectors.toList());
+        return clienti.stream().filter(x -> x.getLastName().equals(lastName)).collect(Collectors.toList());
     }
 
-    public Iterable<Client> GetClientsByName(Banca banca, String firstName, String lastName) throws IOException {
-        List<Client> clienti = banca.get_clienti();
+    public List<Client> GetClientsByName(Banca banca, String firstName, String lastName) throws IOException {
+        List<Client> clienti = banca.getClienti();
         WriteLog("GetClientsByName");
-        return clienti.stream().filter(x -> x.get_lastName().equals(lastName) && x.get_firstName().equals(firstName)).collect(Collectors.toList());
+        return clienti.stream().filter(x -> x.getLastName().equals(lastName) && x.getFirstName().equals(firstName)).collect(Collectors.toList());
     }
 
     public Client GetClientByName(Banca banca, String firstName, String lastName) throws IOException {
-        List<Client> clienti = banca.get_clienti();
-        Optional<Client> client = clienti.stream().filter(x -> x.get_lastName().equals(lastName) && x.get_firstName().equals(firstName)).findFirst();
+        List<Client> clienti = banca.getClienti();
+        Optional<Client> client = clienti.stream().filter(x -> x.getLastName().equals(lastName) && x.getFirstName().equals(firstName)).findFirst();
         WriteLog("GetClientByName");
-        if (client.isPresent())
-            return client.get();
-        return null;
+        return client.orElse(null);
     }
 
-    public Iterable<Cont> GetAccountsByCashType(Banca banca, CashTypes tipValuta) throws IOException {
-        List<Client> clienti = banca.get_clienti();
-        List<Cont> conturiReturnate = new ArrayList<Cont>();
+    public List<Cont> GetAccountsByCashType(Banca banca, CashTypes tipValuta) throws IOException {
+        List<Client> clienti = banca.getClienti();
+        List<Cont> conturiReturnate = new ArrayList<>();
         for (Client client : clienti) {
-            TreeSet<Cont> conturi = client.get_conturi();
-            conturiReturnate.addAll(conturi.stream().filter(x -> x.getTipValuta() == tipValuta).collect(Collectors.toList()));
+            TreeSet<Cont> conturi = client.getConturi();
+            conturiReturnate.addAll(conturi.stream().filter(x -> x.getTipValuta() == tipValuta).toList());
         }
         WriteLog("GetAccountsByCashType");
         return conturiReturnate;
     }
 
-    public Iterable<Cont> GetAccountsByStoredCash(Banca banca, int lowerLimit, int upperLimit) throws IOException {
-        List<Client> clienti = banca.get_clienti();
-        List<Cont> conturiReturnate = new ArrayList<Cont>();
+    public List<Cont> GetAccountsByStoredCash(Banca banca, int lowerLimit, int upperLimit) throws IOException {
+        List<Client> clienti = banca.getClienti();
+        List<Cont> conturiReturnate = new ArrayList<>();
         WriteLog("GetAccountsByStoredCash");
         for (Client client : clienti) {
-            TreeSet<Cont> conturi = client.get_conturi();
-            conturiReturnate.addAll(conturi.stream().filter(x -> x.GetEur() >= lowerLimit && x.GetEur() <= upperLimit).collect(Collectors.toList()));
+            TreeSet<Cont> conturi = client.getConturi();
+            conturiReturnate.addAll(conturi.stream().filter(x -> x.getEur() >= lowerLimit && x.getEur() <= upperLimit).toList());
         }
         return conturiReturnate;
     }
 
     public Cont GetContByIBAN(Client client, String IBAN) throws IOException {
-        TreeSet<Cont> conturi = client.get_conturi();
-        Optional<Cont> cont = conturi.stream().filter(x -> x.get_IBAN().equals(IBAN)).findFirst();
+        TreeSet<Cont> conturi = client.getConturi();
+        Optional<Cont> cont = conturi.stream().filter(x -> x.getIban().equals(IBAN)).findFirst();
         WriteLog("GetContByIBAN");
-        return cont.isPresent() ? cont.get() : null;
+        return cont.orElse(null);
     }
 
     public Client GetClientByIBAN(Banca banca, String IBAN) throws IOException {
-        Optional<Client> client = banca.get_clienti().stream().filter(x -> {
+        Optional<Client> client = banca.getClienti().stream().filter(x -> {
             try {
                 return GetContByIBAN(x, IBAN) != null;
             } catch (IOException e) {
@@ -89,35 +87,35 @@ public class BancaService {
             return false;
         }).findFirst();
         WriteLog("GetClientByIBAN");
-        return client.isPresent() ? client.get() : null;
+        return client.orElse(null);
     }
 
-    public Iterable<Card> GetCardByType(Cont cont, CardTypes type) throws IOException {
+    public List<Card> GetCardByType(Cont cont, CardTypes type) throws IOException {
         WriteLog("GetCardByType");
-        return cont.get_carduri().stream().filter(x -> x.get_tip().equals(type)).collect(Collectors.toList());
+        return cont.getCarduri().stream().filter(x -> x.getTip().equals(type)).collect(Collectors.toList());
     }
 
-    public Iterable<ExtrasDeCont> GetExtrasDeContBeforeDate(Cont cont, Date date) throws IOException {
+    public List<ExtrasDeCont> GetExtrasDeContBeforeDate(Cont cont, LocalDate date) throws IOException {
         WriteLog("GetExtrasDeContBeforeDate");
-        return cont.get_extraseDeCont().stream().filter(x -> x.get_data().before(date)).collect(Collectors.toList());
+        return cont.getExtraseDeCont().stream().filter(x -> x.getData().isBefore(date)).collect(Collectors.toList());
     }
 
-    public Iterable<ExtrasDeCont> GetExtrasDeContAfterDate(Cont cont, Date date) throws IOException {
+    public List<ExtrasDeCont> GetExtrasDeContAfterDate(Cont cont, LocalDate date) throws IOException {
         WriteLog("GetExtrasDeContAfterDate");
-        return cont.get_extraseDeCont().stream().filter(x -> x.get_data().after(date)).collect(Collectors.toList());
+        return cont.getExtraseDeCont().stream().filter(x -> x.getData().isAfter(date)).collect(Collectors.toList());
     }
 
     public void Save(Banca banca) throws IOException {
         WriteService write = WriteService.getInstance();
-        File bancaRoot = new File("Banca_" + banca.get_nume());
+        File bancaRoot = new File("Banca_" + banca.getNume());
         if (!bancaRoot.exists())
             bancaRoot.mkdir();
         File bancaCsv = new File(bancaRoot.getAbsolutePath() + "\\banca.csv");
         if (!bancaCsv.exists())
             bancaCsv.createNewFile();
         String bancaCsvPath = bancaCsv.getAbsolutePath();
-        write.Clear(bancaCsvPath);
-        write.Write(bancaCsvPath, banca.get_nume());
+        write.clear(bancaCsvPath);
+        write.write(bancaCsvPath, banca.getNume());
 
         File clientRoot = new File(bancaRoot.getAbsolutePath() + "\\Client");
         if (!clientRoot.exists())
@@ -127,13 +125,13 @@ public class BancaService {
             clientCsv.createNewFile();
 
         String clientCsvPath = clientCsv.getAbsolutePath();
-        write.Clear(clientCsvPath);
-        for (Client client : banca.get_clienti()) {
-            String deserializedClient = client.get_firstName() + "," + client.get_lastName() + "," + client.get_id() + ","
-                    + client.get_gender() + "," + client.get_dateOfBirth() + "\n";
-            write.Write(clientCsvPath, deserializedClient);
+        write.clear(clientCsvPath);
+        for (Client client : banca.getClienti()) {
+            String deserializedClient = client.getFirstName() + "," + client.getLastName() + "," + client.getId() + ","
+                    + client.getGender() + "," + client.getDateOfBirth() + "\n";
+            write.write(clientCsvPath, deserializedClient);
 
-            File contRoot = new File(clientRoot.getAbsolutePath() + "\\" + client.get_id() + "_conturi");
+            File contRoot = new File(clientRoot.getAbsolutePath() + "\\" + client.getId() + "_conturi");
             if (!contRoot.exists())
                 contRoot.mkdir();
             File contCsv = new File(contRoot.getAbsolutePath() + "\\cont.csv");
@@ -141,14 +139,14 @@ public class BancaService {
                 contCsv.createNewFile();
 
             String contCsvPath = contCsv.getAbsolutePath();
-            write.Clear(contCsvPath);
+            write.clear(contCsvPath);
 
-            for (Cont cont : client.get_conturi()) {
+            for (Cont cont : client.getConturi()) {
                 String deserializedCont = cont.getSumaStocata() + "," + cont.getTipCont() + "," + cont.getTipValuta()
-                        + "," + cont.get_IBAN() + "\n";
-                write.Write(contCsvPath, deserializedCont);
+                        + "," + cont.getIban() + "\n";
+                write.write(contCsvPath, deserializedCont);
 
-                File tranzactieRoot = new File(contRoot.getAbsolutePath() + "\\" + cont.get_IBAN());
+                File tranzactieRoot = new File(contRoot.getAbsolutePath() + "\\" + cont.getIban());
                 if (!tranzactieRoot.exists())
                     tranzactieRoot.mkdir();
                 File tranzactieCsv = new File(tranzactieRoot.getAbsolutePath() + "\\tranzactie.csv");
@@ -156,12 +154,12 @@ public class BancaService {
                     tranzactieCsv.createNewFile();
 
                 String tranzactieCsvPath = tranzactieCsv.getAbsolutePath();
-                write.Clear(tranzactieCsvPath);
+                write.clear(tranzactieCsvPath);
 
-                for (Tranzactie tranzactie : cont.get_tranzactii()) {
-                    String deserializedTranzactie = tranzactie.get_IBANDestinatar() + "," + tranzactie.get_data()
-                            + "," + tranzactie.get_suma() + "," + tranzactie.get_tipValuta() + "," + tranzactie.get_id() + "\n";
-                    write.Write(tranzactieCsvPath, deserializedTranzactie);
+                for (Tranzactie tranzactie : cont.getTranzactii()) {
+                    String deserializedTranzactie = tranzactie.getIbanDestinatar() + "," + tranzactie.getData()
+                            + "," + tranzactie.getSuma() + "," + tranzactie.getTipValuta() + "," + tranzactie.getId() + "\n";
+                    write.write(tranzactieCsvPath, deserializedTranzactie);
                 }
 
                 File extrasDeContRoot = tranzactieRoot;
@@ -170,12 +168,12 @@ public class BancaService {
                     extrasDeContCsv.createNewFile();
 
                 String extrasDeContCsvPath = extrasDeContCsv.getAbsolutePath();
-                write.Clear(extrasDeContCsvPath);
+                write.clear(extrasDeContCsvPath);
 
-                for (ExtrasDeCont extrasDeCont : cont.get_extraseDeCont()) {
+                for (ExtrasDeCont extrasDeCont : cont.getExtraseDeCont()) {
                     String deserializedExtrasDeCont = extrasDeCont.getSumaStocata() + "," + extrasDeCont.getTipCont()
-                            + "," + extrasDeCont.getTipValuta() + "," + extrasDeCont.get_data() + "\n";
-                    write.Write(extrasDeContCsvPath, deserializedExtrasDeCont);
+                            + "," + extrasDeCont.getTipValuta() + "," + extrasDeCont.getData() + "\n";
+                    write.write(extrasDeContCsvPath, deserializedExtrasDeCont);
                 }
 
             }
@@ -183,7 +181,7 @@ public class BancaService {
         WriteLog("Save");
     }
 
-    public Banca Load(String baseFolder) throws IOException, ParseException {
+    public Banca Load(String baseFolder) throws IOException {
         ReadService reader = ReadService.getInstance();
         File banca = new File(baseFolder);
         if (!banca.exists())
@@ -192,7 +190,7 @@ public class BancaService {
         File bancaCSV = new File(banca.getAbsolutePath() + "\\banca.csv");
         if (!bancaCSV.exists())
             throw new FileNotFoundException("Banca data not found");
-        ArrayList<ArrayList<String>> bancaData = reader.Read(bancaCSV.getAbsolutePath());
+        ArrayList<ArrayList<String>> bancaData = reader.read(bancaCSV.getAbsolutePath());
         Banca bancaRead = new Banca(bancaData.get(0).get(0));
 
         File client = new File(banca.getAbsolutePath() + "\\Client");
@@ -203,14 +201,13 @@ public class BancaService {
         if (!clientCSV.exists())
             throw new FileNotFoundException("Client data not found");
 
-        ArrayList<ArrayList<String>> clientData = reader.Read(clientCSV.getAbsolutePath());
+        ArrayList<ArrayList<String>> clientData = reader.read(clientCSV.getAbsolutePath());
         for (ArrayList<String> serializedClient : clientData) {
             String firstName = serializedClient.get(0);
             String lastName = serializedClient.get(1);
             UUID id = UUID.fromString(serializedClient.get(2));
             GenderTypes gender = GenderTypes.valueOf(serializedClient.get(3));
-            SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-            Date dateOfBirth = formatter.parse(serializedClient.get(4));
+            LocalDate dateOfBirth = LocalDate.parse(serializedClient.get(4));
             Client clientRead = new Client(firstName, lastName, dateOfBirth, gender, id);
 
             File cont = new File(client.getAbsolutePath() + "\\" + id + "_conturi");
@@ -221,7 +218,7 @@ public class BancaService {
             if (!contCsv.exists())
                 throw new FileNotFoundException("Cont data not found");
 
-            ArrayList<ArrayList<String>> contData = reader.Read(contCsv.getAbsolutePath());
+            ArrayList<ArrayList<String>> contData = reader.read(contCsv.getAbsolutePath());
 
             for (ArrayList<String> serializedCont : contData) {
                 int sumaStocata = Integer.parseInt(serializedCont.get(0));
@@ -238,16 +235,16 @@ public class BancaService {
                 if (!extrasDeCont.exists())
                     throw new FileNotFoundException("Extras de cont data not found");
 
-                ArrayList<ArrayList<String>> extrasDeContData = reader.Read(extrasDeContCsv.getAbsolutePath());
+                ArrayList<ArrayList<String>> extrasDeContData = reader.read(extrasDeContCsv.getAbsolutePath());
 
                 for (ArrayList<String> serializedExtrasDeCont : extrasDeContData) {
                     int sumaStocataExtras = Integer.parseInt(serializedExtrasDeCont.get(0));
                     AccountTypes tipContExtras = AccountTypes.valueOf(serializedExtrasDeCont.get(1));
                     CashTypes tipValutaExtras = CashTypes.valueOf(serializedExtrasDeCont.get(2));
-                    Date dataExtras = formatter.parse(serializedExtrasDeCont.get(3));
+                    LocalDate dataExtras = LocalDate.parse(serializedExtrasDeCont.get(3));
                     ExtrasDeCont extrasDeContRead = new ExtrasDeCont(sumaStocataExtras, tipContExtras, tipValutaExtras, dataExtras);
 
-                    contRead.AddExtrasDeCont(extrasDeContRead);
+                    contRead.addExtrasDeCont(extrasDeContRead);
                 }
 
                 File tranzactie = extrasDeCont;
@@ -256,22 +253,22 @@ public class BancaService {
                 if (!tranzactieCsv.exists())
                     throw new FileNotFoundException("Tranzactie data not found");
 
-                ArrayList<ArrayList<String>> tranzactieData = reader.Read(tranzactieCsv.getAbsolutePath());
+                ArrayList<ArrayList<String>> tranzactieData = reader.read(tranzactieCsv.getAbsolutePath());
 
                 for (ArrayList<String> serializedTranzactie : tranzactieData) {
                     String IBANDestinatar = serializedTranzactie.get(0);
-                    Date dataTranzactie = formatter.parse(serializedTranzactie.get(1));
+                    LocalDate dataTranzactie = LocalDate.parse(serializedTranzactie.get(1));
                     int suma = Integer.parseInt(serializedTranzactie.get(2));
                     CashTypes tipValutaTranzactie = CashTypes.valueOf(serializedTranzactie.get(3));
                     Tranzactie tranzactieRead = new Tranzactie(IBANDestinatar, dataTranzactie, suma, tipValutaTranzactie);
 
-                    contRead.AddTranzacite(tranzactieRead);
+                    contRead.addTranzacite(tranzactieRead);
                 }
 
-                clientRead.AddCont(contRead);
+                clientRead.addCont(contRead);
             }
 
-            bancaRead.AddClient(clientRead);
+            bancaRead.addClient(clientRead);
         }
         WriteLog("Load");
         return bancaRead;
@@ -279,6 +276,6 @@ public class BancaService {
 
     private void WriteLog(String operation) throws IOException {
         WriteService write = WriteService.getInstance();
-        write.Write(_logFileName, operation + "," + new Date() + "\n");
+        write.write(_logFileName, operation + "," + new Date() + "\n");
     }
 }

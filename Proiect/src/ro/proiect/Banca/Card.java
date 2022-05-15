@@ -4,64 +4,65 @@ import ro.proiect.Enums.CardTypes;
 import ro.proiect.Helpers.Checkers;
 import ro.proiect.Interfaces.Icard;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Card implements Icard {
 
-    protected final UUID _id;
-    protected final Date _expirationDate;
-    protected String _PIN;
-    protected CardTypes _tip = CardTypes.Unknown;
+    protected final UUID id;
+    protected final LocalDate expirationDate;
+    protected String pin;
+    protected CardTypes tip = CardTypes.UNKNOWN;
 
-    public CardTypes get_tip() {
-        return _tip;
+    public CardTypes getTip() {
+        return tip;
     }
 
-    public Card(String PIN, Date expirationDate) {
-        Checkers.CheckProperty(PIN, x -> x.length() > 3, "PIN length too short");
-        this._PIN = PIN;
-        this._id = UUID.randomUUID();
-        this._expirationDate = expirationDate;
+    public Card(String pin, LocalDate expirationDate) {
+        Checkers.checkProperty(pin, x -> x.length() > 3, "PIN length too short");
+        this.pin = pin;
+        this.id = UUID.randomUUID();
+        this.expirationDate = expirationDate;
     }
 
     public Card(Card card) {
-        Checkers.CheckProperty(card._PIN, x -> x.length() > 3, "PIN length too short");
-        this._PIN = card._PIN;
-        this._id = card._id;
-        this._expirationDate = card._expirationDate;
+        Checkers.checkProperty(card.pin, x -> x.length() > 3, "PIN length too short");
+        this.pin = card.pin;
+        this.id = card.id;
+        this.tip = card.tip;
+        this.expirationDate = card.expirationDate;
     }
 
-    public void Pay(int value) {
+    public void pay(int value) {
 
     }
 
-    public int GetAllowance() {
+    public int getAllowance() {
         return -1;
     }
 
-    public void Charge(int value) {
+    public void charge(int value) {
 
     }
 
-    public String get_PIN() {
-        return _PIN;
+    public String getPin() {
+        return pin;
     }
 
-    public void set_PIN(String _PIN) {
-        this._PIN = _PIN;
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
-    public Date get_expirationDate() {
-        return _expirationDate;
+    public LocalDate getExpirationDate() {
+        return expirationDate;
     }
 
     @Override
     public String toString() {
         return "Card{" +
-                "_PIN='" + _PIN + '\'' +
-                ", _id=" + _id +
+                "_PIN='" + pin + '\'' +
+                ", _id=" + id +
                 '}';
     }
 
@@ -70,19 +71,19 @@ public class Card implements Icard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return _id.equals(card._id);
+        return id.equals(card.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id);
+        return Objects.hash(id);
     }
 
-    public Card Clone() {
+    public Card clone() {
         return new Card(this);
     }
 
-    public UUID get_id() {
-        return _id;
+    public UUID getId() {
+        return id;
     }
 }

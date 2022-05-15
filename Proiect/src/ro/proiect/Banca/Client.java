@@ -2,77 +2,75 @@ package ro.proiect.Banca;
 
 import ro.proiect.Enums.GenderTypes;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Client {
-    private final Date _dateOfBirth;
-    private final UUID _id;
-    private String _firstName;
-    private String _lastName;
-    private GenderTypes _gender;
-    private final TreeSet<Cont> _conturi = new TreeSet<Cont>();
+    private final LocalDate dateOfBirth;
+    private final UUID id;
+    private String firstName;
+    private String lastName;
+    private GenderTypes gender;
+    private final TreeSet<Cont> conturi = new TreeSet<>();
 
     public Client() {
-        this("", "", new Date(), GenderTypes.Unspecified);
+        this("", "", LocalDate.now(), GenderTypes.UNSPECIFIED);
     }
 
-    public Client(String _firstName, String _lastName) {
-        this(_firstName, _lastName, new Date(), GenderTypes.Unspecified);
+    public Client(String firstName, String lastName) {
+        this(firstName, lastName, LocalDate.now(), GenderTypes.UNSPECIFIED);
     }
 
     public Client(Client client) {
-        this._firstName = client._firstName;
-        this._lastName = client._lastName;
-        this._dateOfBirth = client._dateOfBirth;
-        this._gender = client._gender;
-        this._id = UUID.randomUUID();
-        for (Cont cont : client._conturi) {
-            this._conturi.add(new Cont(cont));
+        this.firstName = client.firstName;
+        this.lastName = client.lastName;
+        this.dateOfBirth = client.dateOfBirth;
+        this.gender = client.gender;
+        this.id = UUID.randomUUID();
+        for (Cont cont : client.conturi) {
+            this.conturi.add(new Cont(cont));
         }
     }
 
-    public Client(String _firstName, String _lastName, Date _dateOfBirth, GenderTypes _gender) {
-        this(_firstName, _lastName, _dateOfBirth, _gender, UUID.randomUUID());
+    public Client(String firstName, String lastName, LocalDate dateOfBirth, GenderTypes gender) {
+        this(firstName, lastName, dateOfBirth, gender, UUID.randomUUID());
     }
 
-    public Client(String _firstName, String _lastName, Date _dateOfBirth, GenderTypes _gender, UUID id) {
-        this._firstName = _firstName;
-        this._lastName = _lastName;
-        this._dateOfBirth = _dateOfBirth;
-        this._gender = _gender;
-        this._id = id;
+    public Client(String firstName, String lastName, LocalDate dateOfBirth, GenderTypes gender, UUID id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.id = id;
     }
 
-    public String get_firstName() {
-        return _firstName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void set_firstName(String _firstName) {
-        this._firstName = _firstName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String get_lastName() {
-        return _lastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void set_lastName(String _lastName) {
-        this._lastName = _lastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public Date get_dateOfBirth() {
-        return _dateOfBirth;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public GenderTypes get_gender() {
-        return _gender;
+    public GenderTypes getGender() {
+        return gender;
     }
 
-    public void set_gender(GenderTypes _gender) {
-        this._gender = _gender;
+    public void setGender(GenderTypes gender) {
+        this.gender = gender;
     }
 
     @Override
@@ -80,52 +78,52 @@ public class Client {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return _id.equals(client._id);
+        return id.equals(client.id);
     }
 
-    public TreeSet<Cont> get_conturi() {
-        return new TreeSet<Cont>(_conturi.stream().map(x -> new Cont(x)).collect(Collectors.toList()));
+    public TreeSet<Cont> getConturi() {
+        return conturi.stream().map(Cont::new).collect(Collectors.toCollection(TreeSet::new));
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "_firstName='" + _firstName + '\'' +
-                ", _lastName='" + _lastName + '\'' +
-                ", _dateOfBirth=" + _dateOfBirth +
-                ", _gender=" + _gender +
-                ", _id=" + _id +
-                ", _conturi=" + _conturi +
+                "_firstName='" + firstName + '\'' +
+                ", _lastName='" + lastName + '\'' +
+                ", _dateOfBirth=" + dateOfBirth +
+                ", _gender=" + gender +
+                ", _id=" + id +
+                ", _conturi=" + conturi +
                 '}';
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_id);
+        return Objects.hash(id);
     }
 
-    public UUID get_id() {
-        return _id;
+    public UUID getId() {
+        return id;
     }
 
-    public void AddCont(Cont cont) {
-        this._conturi.add(new Cont(cont));
+    public void addCont(Cont cont) {
+        this.conturi.add(new Cont(cont));
     }
 
-    public void AddConturi(Iterable<Cont> conturi) {
+    public void addConturi(List<Cont> conturi) {
         for (Cont cont : conturi) {
-            this.AddCont(cont);
+            this.addCont(cont);
         }
     }
 
-    public void RemoveConturi(Iterable<Cont> conturi) {
+    public void removeConturi(List<Cont> conturi) {
         for (Cont cont : conturi) {
-            this.RemoveCont(cont);
+            this.removeCont(cont);
         }
     }
 
-    public void RemoveCont(Cont cont) {
-        this._conturi.remove(cont);
+    public void removeCont(Cont cont) {
+        this.conturi.remove(cont);
     }
 
 }
