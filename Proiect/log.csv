@@ -1,11 +1,11 @@
-GetAccountsByCashType,Sun May 15 20:46:11 EEST 2022
-GetAccountsByStoredCash,Sun May 15 20:46:11 EEST 2022
-GetClientByName,Sun May 15 20:46:11 EEST 2022
-GetClientByName,Sun May 15 20:46:11 EEST 2022
-GetContByIBAN,Sun May 15 20:46:11 EEST 2022
-GetContByIBAN,Sun May 15 20:46:11 EEST 2022
-GetContByIBAN,Sun May 15 20:46:11 EEST 2022
-GetClientByIBAN,Sun May 15 20:46:11 EEST 2022
-GetCardByType,Sun May 15 20:46:11 EEST 2022
-GetExtrasDeContBeforeDate,Sun May 15 20:46:11 EEST 2022
-Load,Sun May 15 20:46:11 EEST 2022
+GetAccountsByCashType,2022-05-22
+GetAccountsByStoredCash,2022-05-22
+GetClientByName,2022-05-22
+GetClientByName,2022-05-22
+GetContByIBAN,2022-05-22
+GetContByIBAN,2022-05-22
+GetContByIBAN,2022-05-22
+GetClientByIBAN,2022-05-22
+GetCardByType,2022-05-22
+GetExtrasDeContBeforeDate,2022-05-22
+Load,2022-05-22

@@ -9,7 +9,6 @@ import ro.proiect.Enums.GenderTypes;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -276,6 +275,6 @@ public class BancaService {
 
     private void WriteLog(String operation) throws IOException {
         WriteService write = WriteService.getInstance();
-        write.write(_logFileName, operation + "," + new Date() + "\n");
+        write.write(_logFileName, operation + "," + LocalDate.now() + "\n");
     }
 }
